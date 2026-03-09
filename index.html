@@ -622,7 +622,7 @@ NEVER start responses with "I" — vary your opening lines.`;
 //  STATE
 // ═══════════════════════════════════════════════════
 const GEMINI_API_KEY = 'AIzaSyA8WPZ4e_Wwd0IqDzxrR1CR11eT4VNrOX4';
-const GEMINI_URL = `https://corsproxy.io/?https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 let conversationHistory = [];
 let isTyping = false;
 
@@ -764,10 +764,12 @@ async function sendMessage() {
 
   } catch (err) {
     hideTyping();
+    console.error('Gemini error:', err);
     let userMsg = '⚠️ Unable to reach the AI right now. ';
     if (err.message.includes('400')) userMsg += 'Request error — please try again.';
     else if (err.message.includes('429')) userMsg += 'Too many requests — please wait a moment.';
-    else userMsg += 'Please check your connection and try again.';
+    else if (err.message.includes('403')) userMsg += 'API key error — please check your key.';
+    else userMsg += err.message || 'Please check your connection and try again.';
     appendErrorMessage(userMsg);
   }
 
