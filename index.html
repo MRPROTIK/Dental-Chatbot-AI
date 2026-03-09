@@ -621,7 +621,7 @@ NEVER start responses with "I" — vary your opening lines.`;
 // ═══════════════════════════════════════════════════
 //  STATE — OpenRouter (browser-friendly, free)
 // ═══════════════════════════════════════════════════
-const OPENROUTER_KEY = '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';
+const OPENROUTER_KEY = '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';
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 let conversationHistory = [];
 let isTyping = false;
@@ -747,7 +747,7 @@ async function sendMessage() {
         'X-Title': 'Your Dentist AI Assistant'
       },
       body: JSON.stringify({
-        model: 'google/gemini-flash-1.5:free',
+        model: 'meta-llama/llama-3.3-70b-instruct:free',
         max_tokens: 600,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
