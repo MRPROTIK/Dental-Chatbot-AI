@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DentalAI — Smart Dental Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream: #F8F4EE;
+    --ivory: #FDFAF6;
+    --teal: #0A7B6C;
+    --teal-dark: #065E52;
+    --teal-light: #E6F4F2;
+    --teal-mid: #B2DDD8;
+    --charcoal: #1C2B2A;
+    --muted: #6B7E7C;
+    --border: #D9E8E6;
+    --white: #FFFFFF;
+    --red: #D94F4F;
+    --shadow: 0 8px 40px rgba(10,123,108,0.10);
+    --shadow-lg: 0 20px 60px rgba(10,123,108,0.15);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Background decoration */
+  body::before {
+    content:'';
+    position:fixed;
+    top:-200px; right:-200px;
+    width:600px; height:600px;
+    background: radial-gradient(circle, rgba(10,123,108,0.07) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  body::after {
+    content:'';
+    position:fixed;
+    bottom:-150px; left:-150px;
+    width:500px; height:500px;
+    background: radial-gradient(circle, rgba(10,123,108,0.05) 0%, transparent 70%);
+    pointer-events:none;
+  }
+
+  /* Header */
+  .page-header {
+    text-align:center;
+    margin-bottom:14px;
+    animation: fadeDown 0.7s ease both;
+  }
+  .page-header .badge {
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--teal-light);
+    color:var(--teal-dark);
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    padding:4px 12px;
+    border-radius:100px;
+    margin-bottom:8px;
+    border:1px solid var(--teal-mid);
+  }
+  .page-header .badge span { font-size:8px; }
+  .page-header h1 {
+    font-family:'DM Serif Display', serif;
+    font-size:clamp(22px,3vw,32px);
+    color:var(--charcoal);
+    line-height:1.15;
+    letter-spacing:-0.02em;
+  }
+  .page-header h1 em {
+    font-style:italic;
+    color:var(--teal);
+  }
+  .page-header p {
+    margin-top:6px;
+    color:var(--muted);
+    font-size:13px;
+    font-weight:300;
+  }
+
+  /* Chat container */
+  .chat-wrapper {
+    width:100%;
+    max-width:720px;
+    background:var(--ivory);
+    border-radius:24px;
+    border:1px solid var(--border);
+    box-shadow:var(--shadow-lg);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    animation: fadeUp 0.7s ease 0.15s both;
+    position:relative;
+    z-index:1;
+  }
+
+  /* Chat header bar */
+  .chat-header {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+    padding:13px 20px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .chat-header .avatar {
+    width:44px; height:44px;
+    background:rgba(255,255,255,0.15);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    flex-shrink:0;
+    border:2px solid rgba(255,255,255,0.2);
+  }
+  .chat-header .info { flex:1; }
+  .chat-header .info h3 {
+    color:#fff;
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .chat-header .info p {
+    color:rgba(255,255,255,0.7);
+    font-size:12px;
+    margin-top:2px;
+  }
+  .chat-header .status {
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:rgba(255,255,255,0.15);
+    padding:5px 12px;
+    border-radius:100px;
+    color:rgba(255,255,255,0.9);
+    font-size:11px;
+    font-weight:500;
+  }
+  .status-dot {
+    width:7px; height:7px;
+    background:#4ADEAC;
+    border-radius:50%;
+    box-shadow:0 0 0 2px rgba(74,222,172,0.3);
+    animation:pulse 2s infinite;
+  }
+
+  /* Messages area */
+  .messages {
+    height: calc(100vh - 420px);
+    min-height: 120px;
+    overflow-y:auto;
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    scroll-behavior:smooth;
+  }
+  .messages::-webkit-scrollbar { width:4px; }
+  .messages::-webkit-scrollbar-track { background:transparent; }
+  .messages::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+  /* Message bubbles */
+  .msg {
+    display:flex;
+    align-items:flex-end;
+    gap:10px;
+    animation:msgIn 0.35s ease both;
+  }
+  .msg.user { flex-direction:row-reverse; }
+
+  .msg-avatar {
+    width:30px; height:30px;
+    border-radius:50%;
+    background:var(--teal-light);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+    flex-shrink:0;
+    border:1.5px solid var(--border);
+  }
+  .msg.user .msg-avatar {
+    background:var(--teal);
+    color:white;
+    font-size:11px;
+    font-weight:700;
+    border-color:var(--teal-dark);
+  }
+
+  .bubble {
+    max-width:80%;
+    padding:13px 17px;
+    border-radius:18px;
+    font-size:14px;
+    line-height:1.65;
+    color:var(--charcoal);
+  }
+  .msg.bot .bubble {
+    background:var(--white);
+    border:1px solid var(--border);
+    border-bottom-left-radius:4px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.04);
+  }
+  .msg.user .bubble {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+    color:#fff;
+    border-bottom-right-radius:4px;
+    box-shadow:0 4px 12px rgba(10,123,108,0.25);
+  }
+
+  /* Typing indicator */
+  .typing-indicator {
+    display:flex;
+    align-items:flex-end;
+    gap:10px;
+    animation:msgIn 0.3s ease both;
+  }
+  .typing-dots {
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:18px;
+    border-bottom-left-radius:4px;
+    padding:14px 18px;
+    display:flex;
+    gap:5px;
+    align-items:center;
+    box-shadow:0 2px 8px rgba(0,0,0,0.04);
+  }
+  .typing-dots span {
+    width:7px; height:7px;
+    background:var(--teal-mid);
+    border-radius:50%;
+    animation:typingDot 1.4s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay:0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay:0.4s; }
+
+  /* Quick replies */
+  .quick-replies {
+    padding:0 20px 10px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+  }
+  .qr-btn {
+    background:var(--white);
+    border:1.5px solid var(--teal-mid);
+    color:var(--teal-dark);
+    padding:7px 14px;
+    border-radius:100px;
+    font-size:12px;
+    font-weight:500;
+    cursor:pointer;
+    transition:all 0.18s ease;
+    font-family:'DM Sans', sans-serif;
+    white-space:nowrap;
+  }
+  .qr-btn:hover {
+    background:var(--teal);
+    border-color:var(--teal);
+    color:#fff;
+    transform:translateY(-1px);
+    box-shadow:0 4px 12px rgba(10,123,108,0.2);
+  }
+
+  /* Divider */
+  .chat-divider {
+    height:1px;
+    background:var(--border);
+    margin:0 24px;
+  }
+
+  /* Input area */
+  .chat-input {
+    padding:12px 16px;
+    display:flex;
+    gap:10px;
+    align-items:flex-end;
+    background:var(--ivory);
+  }
+  .input-wrap {
+    flex:1;
+    background:var(--white);
+    border:1.5px solid var(--border);
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    padding:0 14px;
+    transition:border-color 0.2s;
+    box-shadow:0 2px 8px rgba(0,0,0,0.03);
+  }
+  .input-wrap:focus-within {
+    border-color:var(--teal);
+    box-shadow:0 0 0 3px rgba(10,123,108,0.08);
+  }
+  .input-wrap textarea {
+    flex:1;
+    border:none;
+    outline:none;
+    background:transparent;
+    font-family:'DM Sans',sans-serif;
+    font-size:14px;
+    color:var(--charcoal);
+    resize:none;
+    min-height:44px;
+    max-height:120px;
+    padding:12px 0;
+    line-height:1.5;
+    overflow-y:auto;
+  }
+  .input-wrap textarea::placeholder { color:#B0C4C2; }
+
+  .send-btn {
+    width:46px; height:46px;
+    background:linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:all 0.2s ease;
+    flex-shrink:0;
+    box-shadow:0 4px 12px rgba(10,123,108,0.3);
+  }
+  .send-btn:hover { transform:scale(1.05); box-shadow:0 6px 18px rgba(10,123,108,0.4); }
+  .send-btn:active { transform:scale(0.97); }
+  .send-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+  .send-btn svg { width:18px; height:18px; fill:#fff; }
+
+  /* API key setup */
+  .api-setup {
+    background:var(--white);
+    border:1.5px dashed var(--teal-mid);
+    border-radius:14px;
+    padding:12px 16px;
+    margin:0 16px 12px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    animation:msgIn 0.3s ease;
+  }
+  .api-setup.hidden { display:none; }
+  .api-setup input {
+    flex:1;
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    padding:9px 13px;
+    font-size:13px;
+    font-family:'DM Sans',sans-serif;
+    outline:none;
+    color:var(--charcoal);
+    background:var(--ivory);
+    transition:border-color 0.2s;
+  }
+  .api-setup input:focus { border-color:var(--teal); }
+  .api-setup input::placeholder { color:#B0C4C2; }
+  .api-key-btn {
+    background:var(--teal);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:9px 16px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'DM Sans',sans-serif;
+    transition:all 0.2s;
+    white-space:nowrap;
+  }
+  .api-key-btn:hover { background:var(--teal-dark); }
+  .api-label {
+    font-size:11px;
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    gap:5px;
+    white-space:nowrap;
+    font-weight:500;
+  }
+
+  /* Footer note */
+  .footer-note {
+    text-align:center;
+    margin-top:10px;
+    color:var(--muted);
+    font-size:11px;
+    animation:fadeUp 0.7s ease 0.3s both;
+    letter-spacing:0.01em;
+  }
+  .footer-note a { color:var(--teal); text-decoration:none; font-weight:500; }
+
+  /* Error bubble */
+  .error-bubble {
+    background:#FEF2F2;
+    border:1px solid #FECACA;
+    color:var(--red);
+    padding:10px 14px;
+    border-radius:12px;
+    font-size:12.5px;
+    max-width:80%;
+    line-height:1.5;
+  }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity:0; transform:translateY(-16px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes msgIn {
+    from { opacity:0; transform:translateY(10px) scale(0.98); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow:0 0 0 2px rgba(74,222,172,0.3); }
+    50% { box-shadow:0 0 0 5px rgba(74,222,172,0.1); }
+  }
+  @keyframes typingDot {
+    0%,60%,100% { transform:translateY(0); opacity:0.4; }
+    30% { transform:translateY(-5px); opacity:1; }
+  }
+
+  /* Responsive */
+  @media(max-width:500px) {
+    .messages { height:220px; }
+    .page-header h1 { font-size:26px; }
+    .chat-header { padding:14px 16px; }
+    .messages { padding:16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="badge"><span>●</span> Live Demo</div>
+  <h1>Your 24/7 <em>Dental Assistant</em><br>Powered by AI</h1>
+  <p>Books appointments · Answers questions · Captures leads — automatically</p>
+</header>
+
+<div class="chat-wrapper">
+
+  <!-- Header bar -->
+  <div class="chat-header">
+    <div class="avatar">🦷</div>
+    <div class="info">
+      <h3>Your Dentist — AI Assistant</h3>
+      <p>Nyckelpigevägen 0, Skövde · Powered by AI</p>
+    </div>
+    <div class="status"><span class="status-dot"></span>Online</div>
+  </div>
+
+  <!-- Messages -->
+  <div class="messages" id="messages"></div>
+
+  <!-- Quick reply chips -->
+  <div class="quick-replies" id="quickReplies">
+    <button class="qr-btn" onclick="sendQuick('Book an appointment')">📅 Book Appointment</button>
+    <button class="qr-btn" onclick="sendQuick('What are your hours?')">🕐 Clinic Hours</button>
+    <button class="qr-btn" onclick="sendQuick('What does a dental implant cost?')">💰 Pricing</button>
+    <button class="qr-btn" onclick="sendQuick('Do you accept insurance?')">🏥 Insurance</button>
+    <button class="qr-btn" onclick="sendQuick('I have a dental emergency')">🚨 Emergency</button>
+  </div>
+
+  <div class="chat-divider"></div>
+
+  <!-- API Key setup -->
+  <div class="api-setup" id="apiSetup">
+    <span class="api-label">🔑 API Key</span>
+    <input type="password" id="apiKeyInput" placeholder="Enter your Anthropic API key to activate AI..."/>
+    <button class="api-key-btn" onclick="saveApiKey()">Activate</button>
+  </div>
+
+  <!-- Input -->
+  <div class="chat-input">
+    <div class="input-wrap">
+      <textarea id="userInput" placeholder="Ask about appointments, pricing, treatments…" rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    </div>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+
+</div>
+
+<p class="footer-note">
+  🔒 Conversations are private &amp; secure ·
+  <a href="#" onclick="clearChat()">Clear chat</a> ·
+  Powered by Claude AI
+</p>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONFIGURATION — Replace with real clinic details
+// ═══════════════════════════════════════════════════
+const CLINIC_CONFIG = {
+  name: "Your Dentist",
+  phone: "+46 76 430 4702",
+  email: "md.motiur52@gmail.com",
+  website: "landing.adsnord.com",
+  bookingLink: "landing.adsnord.com",
+  address: "Nyckelpigevägen 0, 54965 Skövde, Sweden",
+  emergencyLine: "+46 76 430 4702",
+};
+
+// ═══════════════════════════════════════════════════
+//  KNOWLEDGE BASE — Full clinic data from PDF
+// ═══════════════════════════════════════════════════
+const KNOWLEDGE_BASE = `
+CLINIC: ${CLINIC_CONFIG.name}
+ADDRESS: ${CLINIC_CONFIG.address}
+PHONE: ${CLINIC_CONFIG.phone}
+EMAIL: ${CLINIC_CONFIG.email}
+WEBSITE: ${CLINIC_CONFIG.website}
+BOOKING: ${CLINIC_CONFIG.bookingLink}
+
+HOURS:
+- Monday: 08:00 – 16:30
+- Tuesday: 08:00 – 16:00
+- Wednesday: 08:00 – 16:00
+- Thursday: 10:00 – 18:30
+- Friday: 08:00 – 12:30
+- Saturday: Closed
+- Sunday: Closed
+Emergency line: ${CLINIC_CONFIG.emergencyLine} — call immediately for dental emergencies
+
+SERVICES & PRICING:
+
+- Comprehensive Exam (full oral health assessment & charting): $50–$150
+- Routine Cleaning (professional prophylaxis for healthy gums): $75–$200
+- Digital X-Rays (Bitewings or Panoramic, full set): $100–$250
+- Composite Filling (tooth-colored restoration for cavities): $150–$400 per tooth
+- Simple Extraction (removal of a visible, non-impacted tooth): $150–$350
+- Teeth Whitening (professional in-office brightening): $300–$800
+- Porcelain Crown (custom-fitted cap for damaged teeth): $800–$1,500
+
+FREQUENTLY ASKED QUESTIONS:
+
+Q: How often should I visit the dentist?
+A: Every 6 months for a standard check-up and professional cleaning.
+
+Q: At what age should my child first see a dentist?
+A: As soon as the first tooth appears, or by their first birthday — whichever comes first.
+
+Q: Do I really need to floss every day?
+A: Yes. Brushing only cleans about 60% of tooth surfaces. Flossing is the only way to prevent cavities between teeth.
+
+Q: Are dental X-rays safe?
+A: Yes. Digital X-rays use significantly lower radiation than traditional film and are essential for diagnosing hidden decay.
+
+Q: Does a root canal hurt?
+A: Modern anesthesia makes a root canal no more painful than a standard filling. It's designed to stop the pain caused by infection.
+
+Q: What is the difference between silver and white fillings?
+A: Amalgam (silver) is highly durable for back teeth. Composite (white) is aesthetic and matches your natural tooth color.
+
+Q: How can I whiten my teeth safely?
+A: Professional dentist-supervised whitening is the safest method — it achieves results without damaging enamel or causing extreme sensitivity.
+
+Q: What should I do in a dental emergency?
+A: If a tooth is knocked out, keep it moist (in milk) and call our emergency line immediately at ${CLINIC_CONFIG.emergencyLine}. Time is critical.
+
+Q: What are the signs of a cavity?
+A: Sensitivity to sweets or temperature, visible pits, or persistent aching. Note that many early cavities have no symptoms at all.
+
+Q: Why do my gums bleed when I brush?
+A: Bleeding is usually a sign of gingivitis. Consistent brushing and flossing typically resolve this within 7–14 days.
+
+ESCALATION: Always transfer to human staff if the patient says: "I want to speak to someone", "I have a complaint", "discuss my bill", "this is an emergency", "specific treatment plan", or mentions legal action or insurance dispute.
+`;
+
+// ═══════════════════════════════════════════════════
+//  SYSTEM PROMPT
+// ═══════════════════════════════════════════════════
+const SYSTEM_PROMPT = `You are a warm, professional AI front-desk assistant for ${CLINIC_CONFIG.name}. Your name is "Dental Assistant."
+
+Use ONLY the information in this knowledge base to answer questions:
+
+${KNOWLEDGE_BASE}
+
+PERSONALITY:
+- Warm, calm, and professional — like an experienced receptionist
+- Always acknowledge the patient's concern before answering
+- Be concise but thorough. Use line breaks for readability.
+- Use friendly language, not medical jargon
+
+RULES:
+- NEVER diagnose conditions or recommend specific treatments
+- NEVER make promises about outcomes
+- If a question is outside the knowledge base, say: "That's a great question for our clinical team. Would you like me to have someone call you back?"
+- For booking: always offer to take their name and phone number if they can't call directly
+- For emergencies: immediately give the emergency number and advise them to call right away
+- For complaints, billing, legal mentions, or "speak to someone": say you'll connect them with a staff member immediately
+- End EVERY response with: "Is there anything else I can help you with today?" (unless it was already in the response naturally)
+- Format responses cleanly — use bullet points for lists of 3+ items
+- Keep responses under 150 words unless pricing/FAQ details genuinely require more
+
+NEVER start responses with "I" — vary your opening lines.`;
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+const GEMINI_API_KEY = 'AIzaSyA8WPZ4e_Wwd0IqDzxrR1CR11eT4VNrOX4';
+const GEMINI_URL = `https://corsproxy.io/?https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+let conversationHistory = [];
+let isTyping = false;
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+function init() {
+  document.getElementById('apiSetup').classList.add('hidden');
+  appendBotMessage("👋 Hello! Welcome to our dental practice. I'm your AI assistant — happy to help with appointments, pricing, insurance questions, and more.\n\nWhat can I help you with today?");
+}
+
+// ═══════════════════════════════════════════════════
+//  API KEY (not needed for Gemini — key is built in)
+// ═══════════════════════════════════════════════════
+function saveApiKey() {}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1C2B2A;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-family:'DM Sans',sans-serif;z-index:9999;animation:fadeUp 0.3s ease`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+// ═══════════════════════════════════════════════════
+//  MESSAGE RENDERING
+// ═══════════════════════════════════════════════════
+function appendBotMessage(text) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.innerHTML = `
+    <div class="msg-avatar">🦷</div>
+    <div class="bubble">${formatText(text)}</div>`;
+  msgs.appendChild(div);
+  scrollToBottom();
+}
+
+function appendUserMessage(text) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `
+    <div class="bubble">${escapeHtml(text)}</div>
+    <div class="msg-avatar">You</div>`;
+  msgs.appendChild(div);
+  scrollToBottom();
+}
+
+function appendErrorMessage(text) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.innerHTML = `<div class="msg-avatar">⚠️</div><div class="error-bubble">${escapeHtml(text)}</div>`;
+  msgs.appendChild(div);
+  scrollToBottom();
+}
+
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'typing-indicator';
+  div.id = 'typingIndicator';
+  div.innerHTML = `
+    <div class="msg-avatar">🦷</div>
+    <div class="typing-dots"><span></span><span></span><span></span></div>`;
+  msgs.appendChild(div);
+  scrollToBottom();
+}
+
+function hideTyping() {
+  const t = document.getElementById('typingIndicator');
+  if (t) t.remove();
+}
+
+function scrollToBottom() {
+  const msgs = document.getElementById('messages');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function formatText(text) {
+  // Convert markdown-ish to HTML
+  return escapeHtml(text)
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>')
+    .replace(/^(.*)$/, '<p>$1</p>');
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ═══════════════════════════════════════════════════
+//  SEND MESSAGE
+// ═══════════════════════════════════════════════════
+async function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text || isTyping) return;
+
+  // Hide quick replies after first message
+  document.getElementById('quickReplies').style.display = 'none';
+
+  input.value = '';
+  input.style.height = 'auto';
+  appendUserMessage(text);
+
+  conversationHistory.push({ role: 'user', parts: [{ text }] });
+
+  isTyping = true;
+  document.getElementById('sendBtn').disabled = true;
+  showTyping();
+
+  try {
+    const response = await fetch(GEMINI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        contents: conversationHistory,
+        generationConfig: { maxOutputTokens: 600, temperature: 0.7 }
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || `API error ${response.status}`);
+    }
+
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text
+      || "I'm sorry, I didn't get a response. Please try again.";
+
+    conversationHistory.push({ role: 'model', parts: [{ text: reply }] });
+
+    hideTyping();
+    appendBotMessage(reply);
+
+  } catch (err) {
+    hideTyping();
+    let userMsg = '⚠️ Unable to reach the AI right now. ';
+    if (err.message.includes('400')) userMsg += 'Request error — please try again.';
+    else if (err.message.includes('429')) userMsg += 'Too many requests — please wait a moment.';
+    else userMsg += 'Please check your connection and try again.';
+    appendErrorMessage(userMsg);
+  }
+
+  isTyping = false;
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('userInput').focus();
+}
+
+function sendQuick(text) {
+  document.getElementById('userInput').value = text;
+  sendMessage();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function clearChat() {
+  conversationHistory = [];
+  document.getElementById('messages').innerHTML = '';
+  document.getElementById('quickReplies').style.display = 'flex';
+  init();
+}
+
+// Start
+init();
+</script>
+</body>
+</html>
