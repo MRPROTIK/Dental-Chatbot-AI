@@ -619,10 +619,11 @@ RULES:
 NEVER start responses with "I" — vary your opening lines.`;
 
 // ═══════════════════════════════════════════════════
-//  STATE — OpenRouter (browser-friendly, free)
+//  STATE — Cloudflare Worker handles all API calls
 // ═══════════════════════════════════════════════════
-const OPENROUTER_KEY = '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';
-const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const WORKER_URL = 'https://dental-proxy.md-motiur52.workers.dev';
+let conversationHistory = [];
+let isTyping = false;
 let conversationHistory = [];
 let isTyping = false;
 
@@ -738,14 +739,9 @@ async function sendMessage() {
   showTyping();
 
   try {
-    const response = await fetch(OPENROUTER_URL, {
+    const response = await fetch(WORKER_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENROUTER_KEY}`,
-        'HTTP-Referer': 'https://mrprotik.github.io/Dental-Chatbot-AI',
-        'X-Title': 'Your Dentist AI Assistant'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'meta-llama/llama-3.3-70b-instruct:free',
         max_tokens: 600,
