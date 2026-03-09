@@ -32,27 +32,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0;
+    padding: 16px 20px;
     position: relative;
     overflow: hidden;
-  }
-
-  /* Hide page header & footer when running inside a widget iframe */
-  body.widget-mode .page-header,
-  body.widget-mode .footer-note {
-    display: none !important;
-  }
-  body.widget-mode .chat-wrapper {
-    max-width: 100%;
-    width: 100%;
-    height: 100vh;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
-    animation: none;
-  }
-  body.widget-mode .messages {
-    height: calc(100vh - 180px);
   }
 
   /* Background decoration */
@@ -635,18 +617,44 @@ NEVER start responses with "I" — vary your opening lines.`;
 const WORKER_URL = 'https://dental-proxy.md-motiur52.workers.dev';
 let conversationHistory = [];
 let isTyping = false;
+<script>
+const WORKER_URL = 'https://dental-proxy.md-motiur52.workers.dev';
+let conversationHistory = [];
+let isTyping = false;
 
-// ═══════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════
+// Lead capture state
+let leadState = null; // null | 'awaiting_name' | 'awaiting_phone' | 'done'
+let leadData  = { name: '', phone: '', reason: '', time: '' };
+
+const BOOKING_TRIGGERS = [
+  'book', 'appointment', 'schedule', 'call me', 'call back',
+  'reserve', 'visit', 'come in', 'see a dentist', 'want to come'
+];
+
+function detectBookingIntent(text) {
+  const lower = text.toLowerCase();
+  return BOOKING_TRIGGERS.some(t => lower.includes(t));
+}
+
+async function submitLead() {
+  leadData.time = new Date().toLocaleString('en-GB', { timeZone: 'Europe/Stockholm' });
+  try {
+    await fetch(WORKER_URL + '/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(leadData)
+    });
+    showToast('Your details have been saved. We will call you soon!');
+  } catch(e) {
+    console.warn('Lead submit failed:', e);
+  }
+}
+
+// INIT
 function init() {
-  
   appendBotMessage("👋 Hello! Welcome to our dental practice. I'm your AI assistant — happy to help with appointments, pricing, insurance questions, and more.\n\nWhat can I help you with today?");
 }
 
-// ═══════════════════════════════════════════════════
-//  API KEY (not needed for Gemini — key is built in)
-// ═══════════════════════════════════════════════════
 function saveApiKey() {}
 
 function showToast(msg) {
@@ -657,9 +665,7 @@ function showToast(msg) {
   setTimeout(() => t.remove(), 2500);
 }
 
-// ═══════════════════════════════════════════════════
-//  MESSAGE RENDERING
-// ═══════════════════════════════════════════════════
+// MESSAGE RENDERING
 function appendBotMessage(text) {
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
@@ -714,7 +720,6 @@ function scrollToBottom() {
 }
 
 function formatText(text) {
-  // Convert markdown-ish to HTML
   return escapeHtml(text)
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\n\n/g, '</p><p>')
@@ -726,20 +731,33 @@ function escapeHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ═══════════════════════════════════════════════════
-//  SEND MESSAGE
-// ═══════════════════════════════════════════════════
+// SEND MESSAGE — with lead capture intercept
 async function sendMessage() {
   const input = document.getElementById('userInput');
   const text = input.value.trim();
   if (!text || isTyping) return;
 
-  // Hide quick replies after first message
   document.getElementById('quickReplies').style.display = 'none';
-
   input.value = '';
   input.style.height = 'auto';
   appendUserMessage(text);
+
+  // ── Lead capture flow ──────────────────────────────
+  if (leadState === 'awaiting_name') {
+    leadData.name = text;
+    leadState = 'awaiting_phone';
+    appendBotMessage("Thanks " + text + "! And what's the best phone number to reach you on?");
+    return;
+  }
+
+  if (leadState === 'awaiting_phone') {
+    leadData.phone = text;
+    leadState = 'done';
+    await submitLead();
+    appendBotMessage("Perfect! We have your details:\n\n**Name:** " + leadData.name + "\n**Phone:** " + leadData.phone + "\n\nA member of our team will call you back shortly. Is there anything else I can help you with today?");
+    return;
+  }
+  // ──────────────────────────────────────────────────
 
   conversationHistory.push({ role: 'user', content: text });
 
@@ -762,8 +780,6 @@ async function sendMessage() {
     });
 
     const rawText = await response.text();
-    console.log('Worker response:', rawText);
-    
     let data;
     try {
       data = JSON.parse(rawText);
@@ -783,9 +799,18 @@ async function sendMessage() {
     hideTyping();
     appendBotMessage(reply);
 
+    // ── Detect booking intent AFTER bot replies ──────
+    if (leadState === null && detectBookingIntent(text)) {
+      leadData.reason = text;
+      leadState = 'awaiting_name';
+      setTimeout(() => {
+        appendBotMessage("I'd be happy to arrange a callback for you! To get started, could I get your name?");
+      }, 600);
+    }
+    // ─────────────────────────────────────────────────
+
   } catch (err) {
     hideTyping();
-    console.error('Gemini error:', err);
     let userMsg = '⚠️ Unable to reach the AI right now. ';
     if (err.message.includes('400')) userMsg += 'Request error — please try again.';
     else if (err.message.includes('429')) userMsg += 'Too many requests — please wait a moment.';
@@ -818,28 +843,28 @@ function autoResize(el) {
 
 function clearChat() {
   conversationHistory = [];
+  leadState = null;
+  leadData = { name: '', phone: '', reason: '', time: '' };
   document.getElementById('messages').innerHTML = '';
   document.getElementById('quickReplies').style.display = 'flex';
   init();
 }
 
-// Start
-init();
-
-// ═══════════════════════════════════════════════════
-//  WIDGET MODE — auto-detect when loaded in iframe
-// ═══════════════════════════════════════════════════
+// Widget mode detection
 (function() {
   try {
-    // If we're inside an iframe, activate compact widget mode
     if (window.self !== window.top) {
       document.body.classList.add('widget-mode');
     }
   } catch(e) {
-    // Cross-origin check blocked = definitely in an iframe
     document.body.classList.add('widget-mode');
   }
 })();
+
+// Start
+init();
+// Start
+init();
 </script>
 </body>
 </html>
