@@ -504,6 +504,7 @@
 </p>
 
 <script>
+<script>
 // ═══════════════════════════════════════════════════
 //  CONFIGURATION — Replace with real clinic details
 // ═══════════════════════════════════════════════════
@@ -611,19 +612,12 @@ RULES:
 
 NEVER start responses with "I" — vary your opening lines.`;
 
-// ═══════════════════════════════════════════════════
-//  STATE — Cloudflare Worker handles all API calls
-// ═══════════════════════════════════════════════════
-const WORKER_URL = 'https://dental-proxy.md-motiur52.workers.dev';
-let conversationHistory = [];
-let isTyping = false;
-<script>
 const WORKER_URL = 'https://dental-proxy.md-motiur52.workers.dev';
 let conversationHistory = [];
 let isTyping = false;
 
 // Lead capture state
-let leadState = null; // null | 'awaiting_name' | 'awaiting_phone' | 'done'
+let leadState = null;
 let leadData  = { name: '', phone: '', reason: '', time: '' };
 
 const BOOKING_TRIGGERS = [
@@ -650,7 +644,6 @@ async function submitLead() {
   }
 }
 
-// INIT
 function init() {
   appendBotMessage("👋 Hello! Welcome to our dental practice. I'm your AI assistant — happy to help with appointments, pricing, insurance questions, and more.\n\nWhat can I help you with today?");
 }
@@ -659,20 +652,17 @@ function saveApiKey() {}
 
 function showToast(msg) {
   const t = document.createElement('div');
-  t.style.cssText = `position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1C2B2A;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-family:'DM Sans',sans-serif;z-index:9999;animation:fadeUp 0.3s ease`;
+  t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1C2B2A;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-family:DM Sans,sans-serif;z-index:9999;';
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2500);
 }
 
-// MESSAGE RENDERING
 function appendBotMessage(text) {
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
   div.className = 'msg bot';
-  div.innerHTML = `
-    <div class="msg-avatar">🦷</div>
-    <div class="bubble">${formatText(text)}</div>`;
+  div.innerHTML = '<div class="msg-avatar">🦷</div><div class="bubble">' + formatText(text) + '</div>';
   msgs.appendChild(div);
   scrollToBottom();
 }
@@ -681,9 +671,7 @@ function appendUserMessage(text) {
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
   div.className = 'msg user';
-  div.innerHTML = `
-    <div class="bubble">${escapeHtml(text)}</div>
-    <div class="msg-avatar">You</div>`;
+  div.innerHTML = '<div class="bubble">' + escapeHtml(text) + '</div><div class="msg-avatar">You</div>';
   msgs.appendChild(div);
   scrollToBottom();
 }
@@ -692,7 +680,7 @@ function appendErrorMessage(text) {
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
   div.className = 'msg bot';
-  div.innerHTML = `<div class="msg-avatar">⚠️</div><div class="error-bubble">${escapeHtml(text)}</div>`;
+  div.innerHTML = '<div class="msg-avatar">⚠️</div><div class="error-bubble">' + escapeHtml(text) + '</div>';
   msgs.appendChild(div);
   scrollToBottom();
 }
@@ -702,9 +690,7 @@ function showTyping() {
   const div = document.createElement('div');
   div.className = 'typing-indicator';
   div.id = 'typingIndicator';
-  div.innerHTML = `
-    <div class="msg-avatar">🦷</div>
-    <div class="typing-dots"><span></span><span></span><span></span></div>`;
+  div.innerHTML = '<div class="msg-avatar">🦷</div><div class="typing-dots"><span></span><span></span><span></span></div>';
   msgs.appendChild(div);
   scrollToBottom();
 }
@@ -731,7 +717,6 @@ function escapeHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// SEND MESSAGE — with lead capture intercept
 async function sendMessage() {
   const input = document.getElementById('userInput');
   const text = input.value.trim();
@@ -742,11 +727,11 @@ async function sendMessage() {
   input.style.height = 'auto';
   appendUserMessage(text);
 
-  // ── Lead capture flow ──────────────────────────────
+  // Lead capture flow
   if (leadState === 'awaiting_name') {
     leadData.name = text;
     leadState = 'awaiting_phone';
-    appendBotMessage("Thanks " + text + "! And what's the best phone number to reach you on?");
+    appendBotMessage('Thanks ' + text + '! And what is the best phone number to reach you on?');
     return;
   }
 
@@ -754,13 +739,11 @@ async function sendMessage() {
     leadData.phone = text;
     leadState = 'done';
     await submitLead();
-    appendBotMessage("Perfect! We have your details:\n\n**Name:** " + leadData.name + "\n**Phone:** " + leadData.phone + "\n\nA member of our team will call you back shortly. Is there anything else I can help you with today?");
+    appendBotMessage('Perfect! We have your details:\n\n**Name:** ' + leadData.name + '\n**Phone:** ' + leadData.phone + '\n\nA member of our team will call you back shortly. Is there anything else I can help you with today?');
     return;
   }
-  // ──────────────────────────────────────────────────
 
   conversationHistory.push({ role: 'user', content: text });
-
   isTyping = true;
   document.getElementById('sendBtn').disabled = true;
   showTyping();
@@ -781,33 +764,24 @@ async function sendMessage() {
 
     const rawText = await response.text();
     let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch(e) {
-      throw new Error('Response parse failed: ' + rawText.substring(0, 100));
-    }
+    try { data = JSON.parse(rawText); }
+    catch(e) { throw new Error('Response parse failed: ' + rawText.substring(0, 100)); }
 
-    if (!response.ok) {
-      throw new Error(data.error?.message || `API error ${response.status}`);
-    }
+    if (!response.ok) throw new Error(data.error?.message || 'API error ' + response.status);
 
-    const reply = data.choices?.[0]?.message?.content
-      || "I'm sorry, I didn't get a response. Please try again.";
-
+    const reply = data.choices?.[0]?.message?.content || "I'm sorry, I didn't get a response. Please try again.";
     conversationHistory.push({ role: 'assistant', content: reply });
-
     hideTyping();
     appendBotMessage(reply);
 
-    // ── Detect booking intent AFTER bot replies ──────
+    // Detect booking intent after bot replies
     if (leadState === null && detectBookingIntent(text)) {
       leadData.reason = text;
       leadState = 'awaiting_name';
       setTimeout(() => {
         appendBotMessage("I'd be happy to arrange a callback for you! To get started, could I get your name?");
-      }, 600);
+      }, 700);
     }
-    // ─────────────────────────────────────────────────
 
   } catch (err) {
     hideTyping();
@@ -850,20 +824,15 @@ function clearChat() {
   init();
 }
 
-// Widget mode detection
+// Widget mode: hide header/footer when loaded in iframe
 (function() {
   try {
-    if (window.self !== window.top) {
-      document.body.classList.add('widget-mode');
-    }
+    if (window.self !== window.top) document.body.classList.add('widget-mode');
   } catch(e) {
     document.body.classList.add('widget-mode');
   }
 })();
 
-// Start
-init();
-// Start
 init();
 </script>
 </body>
