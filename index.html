@@ -619,10 +619,10 @@ RULES:
 NEVER start responses with "I" — vary your opening lines.`;
 
 // ═══════════════════════════════════════════════════
-//  STATE
+//  STATE — OpenRouter (browser-friendly, free)
 // ═══════════════════════════════════════════════════
-const GEMINI_API_KEY = 'AIzaSyA8WPZ4e_Wwd0IqDzxrR1CR11eT4VNrOX4';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+const OPENROUTER_KEY = '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';
+const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 let conversationHistory = [];
 let isTyping = false;
 
@@ -731,20 +731,28 @@ async function sendMessage() {
   input.style.height = 'auto';
   appendUserMessage(text);
 
-  conversationHistory.push({ role: 'user', parts: [{ text }] });
+  conversationHistory.push({ role: 'user', content: text });
 
   isTyping = true;
   document.getElementById('sendBtn').disabled = true;
   showTyping();
 
   try {
-    const response = await fetch(GEMINI_URL, {
+    const response = await fetch(OPENROUTER_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENROUTER_KEY}`,
+        'HTTP-Referer': 'https://mrprotik.github.io/Dental-Chatbot-AI',
+        'X-Title': 'Your Dentist AI Assistant'
+      },
       body: JSON.stringify({
-        system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-        contents: conversationHistory,
-        generationConfig: { maxOutputTokens: 600, temperature: 0.7 }
+        model: 'google/gemini-2.0-flash-exp:free',
+        max_tokens: 600,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...conversationHistory
+        ]
       })
     });
 
@@ -754,10 +762,10 @@ async function sendMessage() {
       throw new Error(data.error?.message || `API error ${response.status}`);
     }
 
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text
+    const reply = data.choices?.[0]?.message?.content
       || "I'm sorry, I didn't get a response. Please try again.";
 
-    conversationHistory.push({ role: 'model', parts: [{ text: reply }] });
+    conversationHistory.push({ role: 'assistant', content: reply });
 
     hideTyping();
     appendBotMessage(reply);
