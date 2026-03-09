@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DentalAI — Leads Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream: #F8F4EE;
+    --teal: #0A7B6C;
+    --teal-dark: #065E52;
+    --teal-light: #E6F4F2;
+    --teal-mid: #B2DDD8;
+    --charcoal: #1C2B2A;
+    --muted: #6B7E7C;
+    --border: #D9E8E6;
+    --white: #FFFFFF;
+    --red: #D94F4F;
+    --green: #16a34a;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    padding: 32px 20px;
+  }
+
+  /* Login screen */
+  .login-wrap {
+    max-width: 400px;
+    margin: 80px auto;
+    background: var(--white);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    padding: 40px;
+    box-shadow: 0 8px 40px rgba(10,123,108,0.10);
+    text-align: center;
+  }
+  .login-wrap .icon { font-size: 40px; margin-bottom: 12px; }
+  .login-wrap h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+  .login-wrap p { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  .login-wrap input {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    color: var(--charcoal);
+    transition: border-color 0.2s;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 0.1em;
+  }
+  .login-wrap input:focus { border-color: var(--teal); }
+  .login-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.2s;
+  }
+  .login-btn:hover { opacity: 0.9; }
+  .login-error {
+    color: var(--red);
+    font-size: 12px;
+    margin-top: 10px;
+    display: none;
+  }
+
+  /* Dashboard */
+  .dashboard { max-width: 900px; margin: 0 auto; display: none; }
+  .dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .dash-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--charcoal);
+  }
+  .dash-header h1 span { color: var(--teal); font-style: italic; }
+  .logout-btn {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: var(--teal);
+    line-height: 1;
+  }
+  .stat-card .label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  /* Leads table */
+  .leads-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(10,123,108,0.06);
+  }
+  .leads-toolbar {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .leads-toolbar h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--charcoal);
+  }
+  .refresh-btn {
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    border: 1px solid var(--teal-mid);
+    border-radius: 100px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .refresh-btn:hover { background: var(--teal); color: #fff; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead th {
+    text-align: left;
+    padding: 12px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: #FAFCFB;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--teal-light); }
+  tbody td {
+    padding: 14px 20px;
+    font-size: 13.5px;
+    color: var(--charcoal);
+    vertical-align: middle;
+  }
+  .lead-name { font-weight: 600; }
+  .lead-phone { color: var(--teal-dark); font-weight: 500; }
+  .lead-reason {
+    color: var(--muted);
+    font-size: 12px;
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .lead-time { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .badge-new {
+    display: inline-block;
+    background: #DCFCE7;
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 100px;
+    letter-spacing: 0.05em;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  .loading { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginScreen">
+  <div class="icon">🦷</div>
+  <h2>Leads Dashboard</h2>
+  <p>Enter your dashboard password to continue</p>
+  <input type="password" id="passwordInput" placeholder="••••••••"
+    onkeydown="if(event.key==='Enter') login()"/>
+  <button class="login-btn" onclick="login()">Sign In</button>
+  <p class="login-error" id="loginError">Incorrect password. Try again.</p>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <div class="dash-header">
+    <h1>Lead <span>Inbox</span></h1>
+    <button class="logout-btn" onclick="logout()">Sign Out</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="num" id="statTotal">—</div>
+      <div class="label">Total Leads</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="statToday">—</div>
+      <div class="label">Today</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="statWeek">—</div>
+      <div class="label">This Week</div>
+    </div>
+  </div>
+
+  <div class="leads-wrap">
+    <div class="leads-toolbar">
+      <h3>All Captured Leads</h3>
+      <button class="refresh-btn" onclick="loadLeads()">↻ Refresh</button>
+    </div>
+    <div id="leadsBody">
+      <div class="loading">Loading leads...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Config ────────────────────────────────────────────────────────────────
+const WORKER_URL   = 'https://dental-proxy.md-motiur52.workers.dev';
+const DASH_PASSWORD = 'dental2024'; // Change this to a strong password
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+function login() {
+  const val = document.getElementById('passwordInput').value;
+  if (val === DASH_PASSWORD) {
+    sessionStorage.setItem('dash_auth', '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadLeads();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('dash_auth');
+  location.reload();
+}
+
+// Auto-login if session exists
+if (sessionStorage.getItem('dash_auth') === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  loadLeads();
+}
+
+// ── Load leads from Worker ────────────────────────────────────────────────
+async function loadLeads() {
+  document.getElementById('leadsBody').innerHTML = '<div class="loading">Loading leads...</div>';
+  try {
+    const res  = await fetch(WORKER_URL + '/leads', {
+      method: 'GET',
+      headers: { 'x-dash-password': DASH_PASSWORD }
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to load');
+    renderLeads(data.leads || []);
+  } catch(e) {
+    document.getElementById('leadsBody').innerHTML =
+      `<div class="empty-state"><div class="icon">⚠️</div><p>Could not load leads: ${e.message}</p></div>`;
+  }
+}
+
+function renderLeads(leads) {
+  // Stats
+  const now   = new Date();
+  const today = leads.filter(l => {
+    const d = new Date(l.time); 
+    return d.toDateString() === now.toDateString();
+  }).length;
+  const week  = leads.filter(l => {
+    const d = new Date(l.time);
+    return (now - d) < 7 * 24 * 60 * 60 * 1000;
+  }).length;
+
+  document.getElementById('statTotal').textContent = leads.length;
+  document.getElementById('statToday').textContent = today;
+  document.getElementById('statWeek').textContent  = week;
+
+  if (leads.length === 0) {
+    document.getElementById('leadsBody').innerHTML =
+      `<div class="empty-state"><div class="icon">📭</div><p>No leads yet. They'll appear here when patients request a callback.</p></div>`;
+    return;
+  }
+
+  // Sort newest first
+  leads.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+  const isNew = (timeStr) => {
+    const d = new Date(timeStr);
+    return (new Date() - d) < 24 * 60 * 60 * 1000;
+  };
+
+  const rows = leads.map(l => `
+    <tr>
+      <td><span class="lead-name">${escHtml(l.name)}</span> ${isNew(l.time) ? '<span class="badge-new">NEW</span>' : ''}</td>
+      <td><span class="lead-phone">${escHtml(l.phone)}</span></td>
+      <td><span class="lead-reason">${escHtml(l.reason || '—')}</span></td>
+      <td><span class="lead-time">${escHtml(l.time || '—')}</span></td>
+    </tr>
+  `).join('');
+
+  document.getElementById('leadsBody').innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Reason</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
