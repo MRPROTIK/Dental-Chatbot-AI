@@ -1,26 +1,33 @@
 /**
- * DentalAI Widget — Embeddable Chat
- * Drop this single <script> tag on any website to add the chatbot.
+ * DentalAI Widget — Embeddable Chat Button
+ * ─────────────────────────────────────────
+ * Drop this ONE <script> tag on any clinic website to add the chatbot.
  *
  * Usage:
  * <script
- *   src="https://YOUR-CDN-OR-GITHUB-PAGES-URL/widget.js"
+ *   src="https://YOUR-GITHUB-PAGES-URL/widget.js"
  *   data-chat-url="https://YOUR-GITHUB-PAGES-URL/index.html"
  *   data-color="#0A7B6C"
  *   data-label="Chat with us"
  *   data-position="right"
  * ></script>
+ *
+ * Attributes:
+ *   data-chat-url   — URL of your hosted index.html (required)
+ *   data-color      — Button background color (hex). Default: #0A7B6C
+ *   data-label      — Button text. Default: "Chat with us"
+ *   data-position   — "right" or "left". Default: "right"
  */
 
 (function () {
-  // ── Read config from script tag attributes ──────────────────────────────
-  const script = document.currentScript;
+  // ── Read config from script tag ──────────────────────────────
+  const script      = document.currentScript;
   const CHAT_URL    = script?.getAttribute('data-chat-url')  || 'index.html';
   const BRAND_COLOR = script?.getAttribute('data-color')     || '#0A7B6C';
   const LABEL       = script?.getAttribute('data-label')     || 'Chat with us';
-  const POSITION    = script?.getAttribute('data-position')  || 'right'; // 'right' or 'left'
+  const POSITION    = script?.getAttribute('data-position')  || 'right';
 
-  // ── Inject Google Font (DM Sans) ─────────────────────────────────────────
+  // ── Inject Google Font ───────────────────────────────────────
   if (!document.querySelector('link[href*="DM+Sans"]')) {
     const font = document.createElement('link');
     font.rel  = 'stylesheet';
@@ -28,7 +35,7 @@
     document.head.appendChild(font);
   }
 
-  // ── Styles ────────────────────────────────────────────────────────────────
+  // ── Styles ────────────────────────────────────────────────────
   const style = document.createElement('style');
   style.textContent = `
     #dental-widget-btn {
@@ -69,6 +76,7 @@
       background: #FF4444;
       border-radius: 50%;
       border: 2px solid #fff;
+      display: none; /* FIX: hidden by default, shown after delay */
       animation: dental-pulse-notif 2s infinite;
     }
     #dental-widget-frame-wrap {
@@ -127,13 +135,9 @@
     }
     @media (max-width: 480px) {
       #dental-widget-frame-wrap {
-        bottom: 0;
-        right: 0;
-        left: 0;
-        width: 100%;
-        max-width: 100%;
-        height: 100%;
-        max-height: 100%;
+        bottom: 0; right: 0; left: 0;
+        width: 100%; max-width: 100%;
+        height: 100%; max-height: 100%;
         border-radius: 0;
       }
       #dental-widget-btn {
@@ -144,10 +148,10 @@
   `;
   document.head.appendChild(style);
 
-  // ── Toggle Button ─────────────────────────────────────────────────────────
+  // ── Toggle Button ─────────────────────────────────────────────
   const btn = document.createElement('button');
   btn.id = 'dental-widget-btn';
-  btn.setAttribute('aria-label', 'Open chat');
+  btn.setAttribute('aria-label', 'Open dental chat assistant');
   btn.innerHTML = `
     <span class="widget-icon">🦷</span>
     <span class="widget-label">${LABEL}</span>
@@ -155,9 +159,11 @@
   `;
   document.body.appendChild(btn);
 
-  // ── Iframe Wrapper ────────────────────────────────────────────────────────
+  // ── Iframe Wrapper ────────────────────────────────────────────
   const wrap = document.createElement('div');
   wrap.id = 'dental-widget-frame-wrap';
+  wrap.setAttribute('role', 'dialog');
+  wrap.setAttribute('aria-label', 'Dental AI Chat');
 
   const closeBtn = document.createElement('button');
   closeBtn.id = 'dental-widget-close';
@@ -169,22 +175,20 @@
   iframe.id  = 'dental-widget-frame';
   iframe.src = CHAT_URL;
   iframe.setAttribute('allow', 'clipboard-write');
-  iframe.setAttribute('title', 'Dental AI Chat');
+  iframe.setAttribute('title', 'Dental AI Chat Assistant');
   wrap.appendChild(iframe);
 
   document.body.appendChild(wrap);
 
-  // ── Open / Close Logic ────────────────────────────────────────────────────
+  // ── Open / Close Logic ────────────────────────────────────────
   let isOpen = false;
 
   function openChat() {
     isOpen = true;
     wrap.classList.add('open');
     btn.setAttribute('aria-label', 'Close chat');
-    // Hide notification dot once opened
     const notif = document.getElementById('dental-notif');
     if (notif) notif.style.display = 'none';
-    // Update button icon to X
     btn.querySelector('.widget-icon').textContent = '✕';
     btn.querySelector('.widget-label').textContent = 'Close';
   }
@@ -192,7 +196,7 @@
   function closeChat() {
     isOpen = false;
     wrap.classList.remove('open');
-    btn.setAttribute('aria-label', 'Open chat');
+    btn.setAttribute('aria-label', 'Open dental chat assistant');
     btn.querySelector('.widget-icon').textContent = '🦷';
     btn.querySelector('.widget-label').textContent = LABEL;
   }
@@ -205,7 +209,7 @@
     if (e.key === 'Escape' && isOpen) closeChat();
   });
 
-  // Auto-show notification dot after 3s to grab attention
+  // Show notification dot after 3s to grab attention
   setTimeout(() => {
     const notif = document.getElementById('dental-notif');
     if (notif && !isOpen) notif.style.display = 'block';
