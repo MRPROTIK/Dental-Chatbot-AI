@@ -59,34 +59,33 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .hdr-cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,212,255,.35)}
 
 /* HERO */
-.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:120px 20px 80px}
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:100px 20px 60px}
 .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,100,180,.28) 0%, transparent 70%),radial-gradient(ellipse 60% 50% at 80% 80%, rgba(0,180,216,.12) 0%, transparent 60%),var(--dark)}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,180,216,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,180,216,.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse at center,black 20%,transparent 80%)}
 .hero-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,180,216,.15) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-60%);pointer-events:none;animation:glowPulse 4s ease-in-out infinite}
 @keyframes glowPulse{0%,100%{opacity:.6;transform:translate(-50%,-60%) scale(1)}50%{opacity:1;transform:translate(-50%,-60%) scale(1.1)}}
 
-.hero-inner{position:relative;z-index:2;max-width:860px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:20px}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,180,216,.1);border:1px solid rgba(0,180,216,.3);border-radius:999px;color:#7dd3f0;font-size:.64rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:6px 16px}
+.hero-inner{position:relative;z-index:2;max-width:860px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,180,216,.1);border:1px solid rgba(0,180,216,.3);border-radius:999px;color:#7dd3f0;font-size:.62rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:5px 14px}
 .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:blink 1.2s step-start infinite}
 @keyframes blink{50%{opacity:0}}
 
-.hero h1{font-family:var(--font-head);font-size:clamp(2.4rem,8vw,7rem);line-height:.9;letter-spacing:.02em;text-transform:uppercase;color:#fff;text-shadow:0 2px 60px rgba(0,0,0,.8)}
+.hero h1{font-family:var(--font-head);font-size:clamp(2.2rem,7vw,6rem);line-height:.9;letter-spacing:.02em;text-transform:uppercase;color:#fff;text-shadow:0 2px 60px rgba(0,0,0,.8)}
 .hero h1 .accent{color:var(--blue-bright);display:block;text-shadow:0 0 60px rgba(0,212,255,.4)}
-.hero-sub{font-size:clamp(.9rem,2.5vw,1.1rem);color:rgba(255,255,255,.62);font-weight:500;line-height:1.6;max-width:600px}
+.hero-sub{font-size:clamp(.82rem,2vw,.98rem);color:rgba(255,255,255,.62);font-weight:500;line-height:1.5;max-width:580px;margin:0}
 
-.hero-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
-.hero-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:999px;font-size:.74rem;font-weight:600;color:rgba(255,255,255,.8);padding:7px 15px;backdrop-filter:blur(8px)}
+.hero-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.hero-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:999px;font-size:.7rem;font-weight:600;color:rgba(255,255,255,.8);padding:5px 12px;backdrop-filter:blur(8px)}
 .hero-pill svg{color:var(--teal);flex-shrink:0}
 
-.btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,var(--blue),var(--teal));color:#000;font-size:clamp(.92rem,2.5vw,1.05rem);font-weight:800;letter-spacing:.06em;text-transform:uppercase;min-height:56px;padding:0 40px;border-radius:var(--radius);box-shadow:0 8px 40px rgba(0,212,255,.35);transition:all .2s;width:100%;max-width:440px}
+.btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,var(--blue),var(--teal));color:#000;font-size:.95rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;height:50px;padding:0 32px;border-radius:var(--radius);box-shadow:0 8px 40px rgba(0,212,255,.35);transition:all .2s;white-space:nowrap}
 .btn-primary:hover{transform:translateY(-3px);box-shadow:0 16px 50px rgba(0,212,255,.5)}
 .btn-primary:active{transform:scale(.97)}
-.btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:transparent;border:1.5px solid rgba(0,180,216,.4);color:rgba(255,255,255,.75);font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;min-height:48px;padding:0 28px;border-radius:var(--radius);transition:all .2s}
+.btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:transparent;border:1.5px solid rgba(0,180,216,.4);color:rgba(255,255,255,.75);font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;height:46px;padding:0 24px;border-radius:var(--radius);transition:all .2s;white-space:nowrap}
 .btn-secondary:hover{border-color:var(--blue-bright);color:#fff;background:rgba(0,180,216,.08)}
 
-.hero-note{font-size:.65rem;color:rgba(255,255,255,.28);letter-spacing:.06em}
-.hero-cta-row{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
-@media(min-width:520px){.hero-cta-row{flex-direction:row;justify-content:center}.btn-primary{width:auto}}
+.hero-note{font-size:.62rem;color:rgba(255,255,255,.28);letter-spacing:.06em;margin:0}
+.hero-cta-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;width:100%}
 
 /* STATS */
 .stats-bar{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:28px 20px}
@@ -201,47 +200,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:50px 2
 .footer-bottom p{font-size:.72rem;color:rgba(255,255,255,.25)}
 .footer-cert{display:inline-flex;align-items:center;gap:6px;background:rgba(0,180,216,.08);border:1px solid rgba(0,180,216,.2);border-radius:6px;padding:5px 12px;font-size:.65rem;font-weight:700;color:rgba(0,180,216,.7);letter-spacing:.08em}
 
-/* AI CHAT WIDGET */
-#ai-widget{position:fixed;bottom:24px;right:24px;z-index:9000;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
-#ai-bubble{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--teal));display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 32px rgba(0,180,216,.45);transition:all .25s;flex-shrink:0;border:none;position:relative}
-#ai-bubble:hover{transform:scale(1.08);box-shadow:0 12px 44px rgba(0,180,216,.6)}
-#ai-bubble svg{width:28px;height:28px;color:#000}
-#ai-bubble .pulse{position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(0,212,255,.4);animation:widgetPulse 2s ease-out infinite}
-@keyframes widgetPulse{0%{transform:scale(1);opacity:1}100%{transform:scale(1.5);opacity:0}}
-#ai-label{background:rgba(3,11,20,.92);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.6);white-space:nowrap;backdrop-filter:blur(10px)}
-
-#ai-panel{width:360px;max-width:calc(100vw - 48px);height:480px;background:var(--card);border:1px solid rgba(0,180,216,.2);border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.8);display:flex;flex-direction:column;overflow:hidden;transform-origin:bottom right;transform:scale(0);opacity:0;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .25s;pointer-events:none}
-#ai-panel.open{transform:scale(1);opacity:1;pointer-events:all}
-.panel-head{background:linear-gradient(135deg,rgba(0,100,160,.5),rgba(0,70,110,.4));border-bottom:1px solid rgba(0,180,216,.15);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.panel-identity{display:flex;align-items:center;gap:12px}
-.panel-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--teal));display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-.panel-name{font-weight:800;font-size:.9rem;color:#fff}
-.panel-status{font-size:.68rem;color:var(--teal);display:flex;align-items:center;gap:5px}
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:blink 1.2s step-start infinite}
-.panel-close{color:rgba(255,255,255,.4);font-size:1.3rem;cursor:pointer;transition:color .2s;line-height:1;background:none;border:none;padding:4px 8px}
-.panel-close:hover{color:#fff}
-.panel-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
-.panel-msgs::-webkit-scrollbar{width:4px}
-.panel-msgs::-webkit-scrollbar-track{background:transparent}
-.panel-msgs::-webkit-scrollbar-thumb{background:rgba(0,180,216,.2);border-radius:4px}
-.msg{max-width:85%;padding:10px 14px;border-radius:14px;font-size:.82rem;line-height:1.55}
-.msg.bot{background:rgba(0,180,216,.1);border:1px solid rgba(0,180,216,.15);color:rgba(255,255,255,.8);align-self:flex-start;border-bottom-left-radius:4px}
-.msg.user{background:linear-gradient(135deg,var(--blue),rgba(0,120,180,.8));color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
-.msg.typing{display:flex;align-items:center;gap:4px;padding:12px 16px}
-.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:typingDot .9s ease-in-out infinite}
-.typing-dot:nth-child(2){animation-delay:.15s}
-.typing-dot:nth-child(3){animation-delay:.3s}
-@keyframes typingDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-.panel-input-row{padding:12px 14px;border-top:1px solid rgba(0,180,216,.1);display:flex;align-items:center;gap:8px;flex-shrink:0;background:rgba(0,0,0,.2)}
-.panel-input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(0,180,216,.15);border-radius:10px;padding:10px 14px;font-size:.82rem;color:#fff;font-family:var(--font-body);outline:none;transition:border-color .2s}
-.panel-input::placeholder{color:rgba(255,255,255,.28)}
-.panel-input:focus{border-color:rgba(0,180,216,.4)}
-.panel-send{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--teal));display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;border:none}
-.panel-send:hover{transform:scale(1.08);box-shadow:0 4px 16px rgba(0,212,255,.3)}
-.panel-send svg{width:16px;height:16px;color:#000}
-.quick-replies{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 12px}
-.qr-btn{background:rgba(0,180,216,.08);border:1px solid rgba(0,180,216,.2);border-radius:20px;color:rgba(255,255,255,.6);font-size:.72rem;font-weight:600;padding:5px 12px;cursor:pointer;transition:all .2s;font-family:var(--font-body)}
-.qr-btn:hover{background:rgba(0,180,216,.15);color:#fff;border-color:rgba(0,180,216,.4)}
+/* Widget injected by widget.js */
 
 /* ANIMATIONS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -313,13 +272,13 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:50px 2
       <span class="hero-pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>GDPR Compliant</span>
     </div>
     <div class="hero-cta-row">
-      <a href="https://mrprotik.github.io/Dental-Chatbot-AI" target="_blank" class="btn-primary">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        Try Live Demo Free
-      </a>
+      <button onclick="openDentalWidget()" class="btn-primary" id="hero-chat-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Chat with DentalAI — Live Demo
+      </button>
       <a href="#pricing" class="btn-secondary">View Pricing →</a>
     </div>
-    <p class="hero-note">No credit card needed · Demo live at mrprotik.github.io/Dental-Chatbot-AI</p>
+    <p class="hero-note">No credit card needed · Powered by Gemini 2.0 Flash · Instant response</p>
   </div>
 </section>
 
@@ -587,77 +546,12 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:50px 2
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-top">
-      <div class="footer-brand">
-        <div class="logo">Dental<em>AI</em></div>
-        <p>AI-powered dental receptionist system. Built by Motiur Rahman — developer, designer, and Cloudflare specialist based in Skövde, Sweden.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Product</h4>
-        <ul>
-          <li><a href="#services">Features</a></li>
-          <li><a href="#pricing">Pricing</a></li>
-          <li><a href="https://mrprotik.github.io/Dental-Chatbot-AI" target="_blank">Live Demo</a></li>
-          <li><a href="https://github.com/MRPROTIK" target="_blank">GitHub</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <ul>
-          <li><a href="mailto:md.motiur52@gmail.com">md.motiur52@gmail.com</a></li>
-          <li><a href="tel:+46764304702">+46 764 304 702</a></li>
-          <li><a href="https://wa.me/46764304702" target="_blank">WhatsApp</a></li>
-          <li><a href="https://www.fiverr.com" target="_blank">Fiverr</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2026 DentalAI by Motiur Rahman. All rights reserved.</p>
-      <div class="footer-cert">🏆 Certificate DAI-2026-MMR-001</div>
-    </div>
-  </div>
-</footer>
-
-<!-- AI CHAT WIDGET -->
-<div id="ai-widget">
-  <div id="ai-panel">
-    <div class="panel-head">
-      <div class="panel-identity">
-        <div class="panel-avatar">🦷</div>
-        <div>
-          <div class="panel-name">DentalAI Assistant</div>
-          <div class="panel-status"><span class="status-dot"></span>Online — Powered by Gemini</div>
-        </div>
-      </div>
-      <button class="panel-close" id="closePanel">✕</button>
-    </div>
-    <div class="panel-msgs" id="panelMsgs">
-      <div class="msg bot">Hi! 👋 I'm the DentalAI demo assistant. Ask me anything about the product — features, pricing, setup, or how it works!</div>
-    </div>
-    <div class="quick-replies" id="quickReplies">
-      <button class="qr-btn" onclick="sendQuick('What can DentalAI do?')">What can it do?</button>
-      <button class="qr-btn" onclick="sendQuick('How much does it cost?')">Pricing?</button>
-      <button class="qr-btn" onclick="sendQuick('How do I set it up?')">Setup?</button>
-      <button class="qr-btn" onclick="sendQuick('Is there a live demo?')">Live demo?</button>
-    </div>
-    <div class="panel-input-row">
-      <input class="panel-input" id="panelInput" placeholder="Ask about DentalAI…" autocomplete="off"/>
-      <button class="panel-send" id="panelSend">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
-    </div>
-  </div>
-  <div id="ai-label">Ask about DentalAI</div>
-  <button id="ai-bubble" onclick="togglePanel()">
-    <span class="pulse"></span>
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-  </button>
+<!-- Simple copyright line instead of full footer -->
+<div style="text-align:center;padding:20px;font-size:.68rem;color:rgba(255,255,255,.2);border-top:1px solid rgba(0,180,216,.08)">
+  © 2026 DentalAI by Motiur Rahman &nbsp;·&nbsp; Certificate DAI-2026-MMR-001 &nbsp;·&nbsp; <a href="mailto:md.motiur52@gmail.com" style="color:rgba(0,180,216,.5)">md.motiur52@gmail.com</a>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Scroll progress
 const prog = document.getElementById('progress');
 window.addEventListener('scroll', () => {
@@ -687,98 +581,29 @@ document.querySelectorAll('.faq-q').forEach(btn => {
   });
 });
 
-// AI Panel
-let panelOpen = false;
-const panel = document.getElementById('ai-panel');
-const label = document.getElementById('ai-label');
-
-function togglePanel() {
-  panelOpen = !panelOpen;
-  panel.classList.toggle('open', panelOpen);
-  label.style.display = panelOpen ? 'none' : 'block';
-}
-document.getElementById('closePanel').addEventListener('click', () => {
-  panelOpen = false;
-  panel.classList.remove('open');
-  label.style.display = 'block';
-});
-
-// Chat
-const msgs = document.getElementById('panelMsgs');
-const input = document.getElementById('panelInput');
-const qr = document.getElementById('quickReplies');
-
-const SYSTEM = `You are DentalAI's helpful sales assistant. DentalAI v8 FINAL is an AI-powered dental chatbot system built by Motiur Rahman (email: md.motiur52@gmail.com, WhatsApp: +46764304702, GitHub: mrprotik).
-
-Key facts:
-- Powered by Gemini 2.0 Flash via OpenRouter
-- Deployed on Cloudflare Workers with KV storage
-- Google Calendar JWT appointment booking
-- Resend email automation
-- Admin dashboard included
-- Stripe payments built-in
-- Embeddable widget.js for any website
-- Certificate: DAI-2026-MMR-001, 10/10 tests passed
-- Live demo: mrprotik.github.io/Dental-Chatbot-AI
-
-Pricing:
-- Starter: $49 (chat widget, Cloudflare deploy, basic emails)
-- Pro: $97 (full system + calendar + dashboard + Stripe)
-- Done For You: $297 (Motiur sets everything up for the clinic)
-
-Available on: Gumroad, Fiverr, Upwork
-
-Be concise, friendly, and helpful. Encourage people to try the live demo or contact Motiur on WhatsApp for the Done For You package.`;
-
-async function sendMsg(text) {
-  if(!text.trim()) return;
-  qr.style.display = 'none';
-  addMsg(text, 'user');
-  input.value = '';
-  const typing = addTyping();
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: SYSTEM,
-        messages: [{role:'user', content: text}]
-      })
-    });
-    const data = await res.json();
-    typing.remove();
-    const reply = data.content?.map(b => b.text || '').join('') || "I'm having trouble connecting. Please contact Motiur directly on WhatsApp: +46764304702";
-    addMsg(reply, 'bot');
-  } catch(e) {
-    typing.remove();
-    addMsg("Connection issue. Reach Motiur directly on WhatsApp: +46 764 304 702 💬", 'bot');
+// Open the DentalAI widget from hero CTA
+function openDentalWidget() {
+  // widget.js creates #dental-widget-btn — simulate a click on it
+  const widgetBtn = document.getElementById('dental-widget-btn');
+  if (widgetBtn) {
+    widgetBtn.click();
+    // Smooth scroll to bottom-right so user sees the panel open
+    widgetBtn.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  } else {
+    // Fallback: open demo in new tab if widget not loaded yet
+    window.open('https://mrprotik.github.io/Dental-Chatbot-AI/index.html', '_blank');
   }
 }
 
-function addMsg(text, role) {
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-  div.textContent = text;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  return div;
-}
-
-function addTyping() {
-  const div = document.createElement('div');
-  div.className = 'msg bot typing';
-  div.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  return div;
-}
-
-function sendQuick(text) { sendMsg(text); }
-
-document.getElementById('panelSend').addEventListener('click', () => sendMsg(input.value));
-input.addEventListener('keydown', e => { if(e.key === 'Enter') sendMsg(input.value); });
 </script>
+
+<!-- YOUR REAL DENTALAI WIDGET -->
+<script
+  src="https://mrprotik.github.io/Dental-Chatbot-AI/widget.js"
+  data-chat-url="https://mrprotik.github.io/Dental-Chatbot-AI/index.html"
+  data-color="#00b4d8"
+  data-label="Try DentalAI"
+  data-position="right"
+></script>
 </body>
 </html>
