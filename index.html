@@ -14,14 +14,14 @@
   --gold:#C9821A;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);min-height:100vh;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:12px 20px;position:relative;overflow:hidden;box-sizing:border-box;}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 80% 10%,rgba(10,123,108,0.09) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 10% 90%,rgba(10,123,108,0.06) 0%,transparent 60%);pointer-events:none;z-index:0;}
 
 /* Header */
-.page-header{text-align:center;margin-bottom:18px;animation:fadeDown 0.8s cubic-bezier(0.22,1,0.36,1) both;position:relative;z-index:1;}
-.badge{display:inline-flex;align-items:center;gap:7px;background:var(--white);border:1px solid var(--border);color:var(--teal-dark);font-size:10.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:12px;box-shadow:0 2px 12px var(--teal-glow);}
+.page-header{text-align:center;margin-bottom:8px;animation:fadeDown 0.8s cubic-bezier(0.22,1,0.36,1) both;position:relative;z-index:1;}
+.badge{display:inline-flex;align-items:center;gap:7px;background:var(--white);border:1px solid var(--border);color:var(--teal-dark);font-size:10.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:8px;box-shadow:0 2px 12px var(--teal-glow);}
 .badge-dot{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:livePulse 2s infinite;}
-.page-header h1{font-family:'Playfair Display',serif;font-size:clamp(24px,3.5vw,38px);color:var(--charcoal);line-height:1.1;letter-spacing:-0.02em;}
+.page-header h1{font-family:'Playfair Display',serif;font-size:clamp(20px,2.8vw,32px);color:var(--charcoal);line-height:1.1;letter-spacing:-0.02em;}
 .page-header h1 em{font-style:italic;color:var(--teal);}
 .page-header p{margin-top:8px;color:var(--muted);font-size:13px;font-weight:300;}
 
@@ -30,7 +30,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .offer-banner .offer-close{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.7);font-size:16px;cursor:pointer;padding:2px 6px;}
 
 /* Chat wrapper */
-.chat-wrapper{width:100%;max-width:700px;background:var(--ivory);border-radius:28px;border:1px solid var(--border);box-shadow:0 32px 80px rgba(10,123,108,0.13),0 4px 20px rgba(0,0,0,0.05);display:flex;flex-direction:column;overflow:hidden;animation:fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.1s both;position:relative;z-index:1;}
+.chat-wrapper{width:100%;max-width:700px;flex:1;min-height:0;background:var(--ivory);border-radius:28px;border:1px solid var(--border);box-shadow:0 32px 80px rgba(10,123,108,0.13),0 4px 20px rgba(0,0,0,0.05);display:flex;flex-direction:column;overflow:hidden;animation:fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.1s both;position:relative;z-index:1;}
 
 /* Chat header */
 .chat-header{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-deep) 100%);padding:16px 22px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;}
@@ -43,7 +43,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .status-dot{width:7px;height:7px;background:#4ADEAC;border-radius:50%;box-shadow:0 0 0 2px rgba(74,222,172,0.3);animation:livePulse 2s infinite;}
 
 /* Messages */
-.messages{height:calc(100vh - 390px);min-height:200px;max-height:420px;overflow-y:auto;padding:24px 22px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth;}
+.messages{flex:1;min-height:0;max-height:unset;overflow-y:auto;padding:24px 22px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth;}
 .messages::-webkit-scrollbar{width:3px;}
 .messages::-webkit-scrollbar-thumb{background:var(--teal-mid);border-radius:3px;}
 
@@ -84,7 +84,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .send-btn svg{width:18px;height:18px;fill:#fff;}
 .error-bubble{background:#FEF2F2;border:1px solid #FECACA;color:var(--red);padding:10px 14px;border-radius:14px;font-size:12.5px;max-width:78%;line-height:1.55;}
 
-.footer-note{text-align:center;margin-top:12px;color:var(--muted);font-size:11px;animation:fadeUp 0.8s ease 0.3s both;position:relative;z-index:1;}
+.footer-note{text-align:center;margin-top:6px;color:var(--muted);font-size:11px;animation:fadeUp 0.8s ease 0.3s both;position:relative;z-index:1;}
 .footer-note a{color:var(--teal);text-decoration:none;font-weight:500;}
 
 /* ══ BOOKING CALENDAR ══ */
@@ -144,7 +144,7 @@ body.widget-mode .page-header,body.widget-mode .footer-note{display:none;}
 body.widget-mode{justify-content:flex-start;padding:0;height:100vh;background:var(--ivory);overflow:hidden;}
 body.widget-mode .chat-wrapper{max-width:100%;width:100%;height:100vh;border-radius:0;box-shadow:none;border:none;animation:none;}
 body.widget-mode .messages{height:calc(100vh - 195px);max-height:unset;}
-@media(max-width:520px){.page-header h1{font-size:24px;}.messages{padding:16px;}.bubble{max-width:88%;}}
+@media(max-width:520px){.page-header h1{font-size:18px;}.page-header p{font-size:12px;}.messages{padding:16px;}.bubble{max-width:88%;}}
 </style>
 </head>
 <body>
@@ -220,7 +220,7 @@ const CLINIC_CONFIG = {
 document.getElementById('clinicNameHeader').textContent    = CLINIC_CONFIG.name + ' — AI Assistant';
 document.getElementById('clinicAddressHeader').textContent = CLINIC_CONFIG.address + ' · Available 24/7';
 
-const WORKER_URL = 'https://dental-proxy.md-motiur52.workers.dev';
+const WORKER_URL = 'https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev';
 
 // ── Load special offer on page load ──────────────────────────
 async function loadOffer() {
