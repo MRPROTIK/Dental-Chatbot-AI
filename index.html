@@ -220,7 +220,8 @@ const CLINIC_CONFIG = {
 document.getElementById('clinicNameHeader').textContent    = CLINIC_CONFIG.name + ' — AI Assistant';
 document.getElementById('clinicAddressHeader').textContent = CLINIC_CONFIG.address + ' · Available 24/7';
 
-const WORKER_URL = 'https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev';
+// ── FIXED: Real Worker URL ────────────────────────────────────
+const WORKER_URL = 'https://dental-proxy.md-motiur52.workers.dev';
 
 // ── Load special offer on page load ──────────────────────────
 async function loadOffer() {
@@ -395,7 +396,6 @@ async function renderTimeSlots(isoDate) {
     return;
   }
 
-  // Generate slots from admin hours
   const [openH, openM]   = dayHours.open.split(':').map(Number);
   const [closeH, closeM] = dayHours.close.split(':').map(Number);
   const openMins  = openH  * 60 + openM;
@@ -408,7 +408,6 @@ async function renderTimeSlots(isoDate) {
     allSlots.push(`${hh}:${mm}`);
   }
 
-  // Fetch already-booked slots for this date
   let bookedSlots = [];
   try {
     const res  = await fetch(`${WORKER_URL}/booked-slots?date=${isoDate}`);
@@ -416,20 +415,18 @@ async function renderTimeSlots(isoDate) {
     bookedSlots = data.slots || [];
   } catch(e) {}
 
-  // Check admin-blocked individual slots
   const blockedSlots = (settings.blockedDates && settings.blockedDates[isoDate] && Array.isArray(settings.blockedDates[isoDate]))
     ? settings.blockedDates[isoDate] : [];
   const takenSlots = [...bookedSlots, ...blockedSlots];
 
-  // Filter out past times if the selected date is today
   const nowStockholm = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Stockholm' }));
   const todayISO = `${nowStockholm.getFullYear()}-${String(nowStockholm.getMonth()+1).padStart(2,'0')}-${String(nowStockholm.getDate()).padStart(2,'0')}`;
   const currentMins = nowStockholm.getHours() * 60 + nowStockholm.getMinutes();
 
   const availableSlots = allSlots.filter(t => {
-    if (isoDate !== todayISO) return true; // future date — show all
+    if (isoDate !== todayISO) return true;
     const [h, m] = t.split(':').map(Number);
-    return (h * 60 + m) > currentMins; // only future times today
+    return (h * 60 + m) > currentMins;
   });
 
   const dateStr = new Date(isoDate).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
@@ -437,7 +434,7 @@ async function renderTimeSlots(isoDate) {
     <div class="time-wrap">
       <div class="time-label">Available times — ${dateStr}</div>
       <div class="time-grid" id="timeGrid">
-        ${availableSlots.length === 0 ? '<div class=\"no-slots\">No more available slots today.</div>' : availableSlots.map(t => {
+        ${availableSlots.length === 0 ? '<div class="no-slots">No more available slots today.</div>' : availableSlots.map(t => {
           const taken = takenSlots.includes(t);
           return `<button class="time-slot${taken?' taken':''}" ${taken?'disabled':''} onclick="selectTime('${t}')">${t}${taken?'<br><small>Booked</small>':''}</button>`;
         }).join('')}
@@ -522,10 +519,8 @@ async function confirmBooking() {
     return;
   }
 
-  // Remove calendar
   document.getElementById('bookingCalendarMsg')?.remove();
 
-  // Show success
   appendBotMessage(`🎉 **Appointment Confirmed!**\n\n📅 **Date:** ${dateStr}\n🕐 **Time:** ${selectedTime}\n👤 **Name:** ${name}\n📞 **Phone:** ${phone}\n📧 **Email:** ${email}\n📋 **Reason:** ${reason}\n\n✅ A confirmation email has been sent to **${email}**\n⏰ You'll receive a reminder 1 hour before your appointment.\n\nIf you need to cancel, please call **${CLINIC_CONFIG.phone}**.\n\nIs there anything else I can help you with today?`);
 
   bookingStep = null; selectedDate = null; selectedTime = null;
@@ -643,7 +638,6 @@ function init() {
 
 (function(){ try{if(window.self!==window.top)document.body.classList.add('widget-mode');}catch(e){document.body.classList.add('widget-mode');} })();
 
-// Load offer and init
 loadOffer();
 init();
 </script>
