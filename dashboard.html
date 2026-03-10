@@ -120,6 +120,48 @@ td{padding:14px 20px;font-size:13px;color:var(--cream);vertical-align:middle;}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--surface);border:1px solid var(--border);color:var(--cream);padding:11px 22px;border-radius:100px;font-size:13px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);opacity:0;transition:all 0.3s;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+/* Status badges */
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600;}
+.status-badge.confirmed{background:rgba(34,197,94,0.12);color:#4ADE80;border:1px solid rgba(34,197,94,0.25);}
+.status-badge.pending{background:rgba(245,158,11,0.12);color:#FCD34D;border:1px solid rgba(245,158,11,0.25);}
+.status-badge.cancelled{background:rgba(239,68,68,0.12);color:#FCA5A5;border:1px solid rgba(239,68,68,0.25);}
+.status-badge.completed{background:rgba(99,102,241,0.12);color:#A5B4FC;border:1px solid rgba(99,102,241,0.25);}
+.status-badge.no-show{background:rgba(107,114,128,0.15);color:#9CA3AF;border:1px solid rgba(107,114,128,0.25);}
+
+/* Action buttons in table */
+.tbl-btn{padding:5px 11px;border-radius:8px;font-size:11.5px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all 0.15s;border:1px solid;}
+.tbl-btn.edit{background:var(--teal-dim);border-color:rgba(10,123,108,0.25);color:var(--teal-bright);}
+.tbl-btn.edit:hover{background:var(--teal);color:#fff;}
+.tbl-btn.cancel{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);color:#FCA5A5;}
+.tbl-btn.cancel:hover{background:rgba(239,68,68,0.18);}
+
+/* Edit modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;width:100%;max-width:520px;overflow:hidden;animation:fadeUp 0.3s cubic-bezier(0.22,1,0.36,1) both;box-shadow:0 40px 80px rgba(0,0,0,0.5);}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-header h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--white);}
+.modal-close{background:var(--card);border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-family:sans-serif;}
+.modal-close:hover{color:var(--cream);}
+.modal-body{padding:24px;display:grid;gap:16px;}
+.modal-field label{display:block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--white);outline:none;transition:border-color 0.2s;}
+.modal-field input:focus,.modal-field select:focus,.modal-field textarea:focus{border-color:var(--teal);}
+.modal-field select option{background:var(--card);}
+.modal-field textarea{resize:vertical;min-height:80px;}
+.modal-grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+
+/* Notes column */
+.notes-cell{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:12px;}
+
+/* Timeline / history panel */
+.history-section{margin-top:16px;}
+.history-section label{display:block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.history-log{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;max-height:120px;overflow-y:auto;font-size:12px;color:var(--muted);line-height:1.8;}
+.history-log div{border-bottom:1px solid rgba(31,51,48,0.4);padding-bottom:4px;margin-bottom:4px;}
+.history-log div:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:900px){.sidebar{width:200px;}.main{margin-left:200px;padding:24px;}.stats-grid{grid-template-columns:repeat(2,1fr);}}
@@ -187,13 +229,21 @@ td{padding:14px 20px;font-size:13px;color:var(--cream);vertical-align:middle;}
     <!-- BOOKINGS -->
     <div class="section active" id="section-bookings">
       <div class="topbar"><div><h1>Appointments</h1><p>All booked appointments</p></div>
-        <div style="display:flex;gap:10px;">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <select id="statusFilter" onchange="filterTable('bookings')" style="background:var(--card);border:1px solid var(--border);border-radius:9px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--cream);outline:none;">
+            <option value="">All Statuses</option>
+            <option value="confirmed">✅ Confirmed</option>
+            <option value="pending">⏳ Pending</option>
+            <option value="completed">🏁 Completed</option>
+            <option value="cancelled">❌ Cancelled</option>
+            <option value="no-show">👻 No-show</option>
+          </select>
           <div class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="search-input" id="bookingSearch" placeholder="Search…" oninput="filterTable('bookings')"/></div>
           <button class="btn-secondary" onclick="loadAll()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Refresh</button>
         </div>
       </div>
-      <div class="card"><table><thead><tr><th>Patient</th><th>Date & Time</th><th>Phone</th><th>Email</th><th>Reason</th><th>Calendar</th></tr></thead>
-        <tbody id="bookingsBody"><tr class="loading-row"><td colspan="6"><span class="spinner"></span>Loading…</td></tr></tbody>
+      <div class="card"><table><thead><tr><th>Patient</th><th>Date &amp; Time</th><th>Phone</th><th>Reason</th><th>Status</th><th>Notes</th><th>Actions</th></tr></thead>
+        <tbody id="bookingsBody"><tr class="loading-row"><td colspan="7"><span class="spinner"></span>Loading…</td></tr></tbody>
       </table></div>
     </div>
 
@@ -282,6 +332,70 @@ td{padding:14px 20px;font-size:13px;color:var(--cream);vertical-align:middle;}
   </main>
 </div>
 
+<!-- EDIT BOOKING MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>&#9999;&#65039; Edit Appointment</h3>
+      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId"/>
+      <div class="modal-grid2">
+        <div class="modal-field">
+          <label>Patient Name</label>
+          <input type="text" id="editName" placeholder="Full name"/>
+        </div>
+        <div class="modal-field">
+          <label>Phone</label>
+          <input type="tel" id="editPhone" placeholder="+46..."/>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label>Email</label>
+        <input type="email" id="editEmail" placeholder="patient@email.com"/>
+      </div>
+      <div class="modal-grid2">
+        <div class="modal-field">
+          <label>Date</label>
+          <input type="date" id="editDate"/>
+        </div>
+        <div class="modal-field">
+          <label>Time</label>
+          <input type="time" id="editTime"/>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label>Reason / Service</label>
+        <input type="text" id="editReason" placeholder="e.g. Teeth cleaning"/>
+      </div>
+      <div class="modal-field">
+        <label>Status</label>
+        <select id="editStatus">
+          <option value="confirmed">&#x2705; Confirmed</option>
+          <option value="pending">&#x23F3; Pending</option>
+          <option value="completed">&#x1F3C1; Completed</option>
+          <option value="cancelled">&#x274C; Cancelled</option>
+          <option value="no-show">&#x1F47B; No-show</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Admin Notes</label>
+        <textarea id="editNotes" placeholder="Internal notes - not visible to patient..."></textarea>
+      </div>
+      <div class="history-section">
+        <label>Change History</label>
+        <div class="history-log" id="editHistory">-</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveEdit()">&#x1F4BE; Save Changes</button>
+    </div>
+  </div>
+</div>
+
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -351,21 +465,142 @@ function updateStats() {
 }
 
 // ── Render Bookings ───────────────────────────────────────────
+const STATUS_LABELS = {
+  confirmed: '✅ Confirmed',
+  pending:   '⏳ Pending',
+  completed: '🏁 Completed',
+  cancelled: '❌ Cancelled',
+  'no-show': '👻 No-show',
+};
+
 function renderBookings(list) {
   const tbody = document.getElementById('bookingsBody');
-  if (!list.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="ei">📅</div><h3>No appointments yet</h3><p>Bookings will appear here.</p></div></td></tr>`; return; }
+  if (!list.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="ei">📅</div><h3>No appointments yet</h3><p>Bookings will appear here.</p></div></td></tr>`; return; }
   tbody.innerHTML = list.map(b => {
-    const init = (b.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    return `<tr>
-      <td><div class="lead-name"><div class="lead-avatar">${init}</div>${esc(b.name||'Unknown')}</div></td>
+    const init   = (b.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const status = b.status || 'confirmed';
+    const label  = STATUS_LABELS[status] || status;
+    const isCancelled = status === 'cancelled';
+    return `<tr style="${isCancelled ? 'opacity:0.5;' : ''}">
+      <td><div class="lead-name"><div class="lead-avatar">${init}</div><div><div>${esc(b.name||'Unknown')}</div><div style="font-size:11px;color:var(--muted);font-weight:400;">${esc(b.email||'')}</div></div></div></td>
       <td><strong>${esc(b.date||'')}</strong><br><small style="color:var(--muted)">${esc(b.time||'')}</small></td>
       <td><a href="tel:${esc(b.phone||'')}" style="color:var(--teal-bright);text-decoration:none;">${esc(b.phone||'—')}</a></td>
-      <td style="color:var(--muted);font-size:12px;">${esc(b.email||'—')}</td>
       <td><span style="background:var(--teal-dim);color:var(--teal-bright);padding:3px 9px;border-radius:100px;font-size:11.5px;">${esc(b.reason||'General')}</span></td>
-      <td>${b.calEventId ? '<span style="color:#4ADE80;font-size:12px;">✅ Synced</span>' : '<span style="color:var(--muted);font-size:12px;">—</span>'}</td>
+      <td><span class="status-badge ${status}">${label}</span></td>
+      <td><div class="notes-cell" title="${esc(b.adminNotes||'')}">${esc(b.adminNotes||'—')}</div></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="tbl-btn edit" onclick="openEdit('${esc(b.id||'')}')">✏️ Edit</button>
+        ${!isCancelled ? `<button class="tbl-btn cancel" onclick="quickCancel('${esc(b.id||'')}')">✕ Cancel</button>` : ''}
+      </td>
     </tr>`;
   }).join('');
 }
+
+// ── Edit Modal ────────────────────────────────────────────────
+function openEdit(id) {
+  const b = allBookings.find(x => x.id === id);
+  if (!b) return;
+  document.getElementById('editId').value      = b.id;
+  document.getElementById('editName').value    = b.name    || '';
+  document.getElementById('editPhone').value   = b.phone   || '';
+  document.getElementById('editEmail').value   = b.email   || '';
+  document.getElementById('editDate').value    = b.isoDate || b.date || '';
+  document.getElementById('editTime').value    = b.time    || '';
+  document.getElementById('editReason').value  = b.reason  || '';
+  document.getElementById('editStatus').value  = b.status  || 'confirmed';
+  document.getElementById('editNotes').value   = b.adminNotes || '';
+  // Render history log
+  const hist = Array.isArray(b.history) ? b.history : [];
+  document.getElementById('editHistory').innerHTML = hist.length
+    ? hist.map(h => `<div>${esc(h)}</div>`).join('')
+    : '<div style="color:var(--muted)">No changes recorded yet.</div>';
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('open');
+}
+
+async function saveEdit() {
+  const id = document.getElementById('editId').value;
+  const idx = allBookings.findIndex(x => x.id === id);
+  if (idx === -1) return;
+
+  const oldStatus = allBookings[idx].status || 'confirmed';
+  const newStatus = document.getElementById('editStatus').value;
+
+  // Build updated booking
+  const updated = {
+    ...allBookings[idx],
+    name:       document.getElementById('editName').value.trim(),
+    phone:      document.getElementById('editPhone').value.trim(),
+    email:      document.getElementById('editEmail').value.trim(),
+    isoDate:    document.getElementById('editDate').value,
+    date:       document.getElementById('editDate').value,
+    time:       document.getElementById('editTime').value,
+    reason:     document.getElementById('editReason').value.trim(),
+    status:     newStatus,
+    adminNotes: document.getElementById('editNotes').value.trim(),
+  };
+
+  // Append to history log
+  const ts = new Date().toLocaleString('en-GB', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+  const history = Array.isArray(allBookings[idx].history) ? [...allBookings[idx].history] : [];
+  if (oldStatus !== newStatus) history.push(`${ts} — Status changed: ${oldStatus} → ${newStatus}`);
+  else history.push(`${ts} — Details updated`);
+  updated.history = history;
+
+  // Save to KV via Worker
+  try {
+    const res = await fetch(WORKER_URL + '/booking/update', {
+      method:  'POST',
+      headers: { 'Content-Type':'application/json', 'x-dash-password': DASH_PASS },
+      body:    JSON.stringify(updated),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Save failed');
+
+    allBookings[idx] = updated;
+    renderBookings(allBookings);
+    updateStats();
+    closeModal();
+    showToast('✅ Booking updated!');
+  } catch(e) {
+    showToast('❌ ' + e.message);
+  }
+}
+
+async function quickCancel(id) {
+  if (!confirm('Cancel this appointment?')) return;
+  const idx = allBookings.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  const ts = new Date().toLocaleString('en-GB', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+  const updated = {
+    ...allBookings[idx],
+    status: 'cancelled',
+    history: [...(allBookings[idx].history || []), `${ts} — Cancelled by admin`],
+  };
+  try {
+    const res = await fetch(WORKER_URL + '/booking/update', {
+      method:  'POST',
+      headers: { 'Content-Type':'application/json', 'x-dash-password': DASH_PASS },
+      body:    JSON.stringify(updated),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Cancel failed');
+    allBookings[idx] = updated;
+    renderBookings(allBookings);
+    updateStats();
+    showToast('❌ Appointment cancelled');
+  } catch(e) {
+    showToast('❌ ' + e.message);
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
 
 // ── Render Leads ──────────────────────────────────────────────
 function renderLeads(list) {
@@ -384,9 +619,11 @@ function renderLeads(list) {
 }
 
 function filterTable(type) {
-  const q = document.getElementById(type==='bookings'?'bookingSearch':'leadsSearch').value.toLowerCase();
-  const list = type === 'bookings' ? allBookings : allLeads;
-  const filtered = q ? list.filter(i => (i.name||'').toLowerCase().includes(q)||(i.phone||'').toLowerCase().includes(q)||(i.reason||'').toLowerCase().includes(q)) : list;
+  const q      = document.getElementById(type==='bookings'?'bookingSearch':'leadsSearch').value.toLowerCase();
+  const status = type==='bookings' ? (document.getElementById('statusFilter')?.value || '') : '';
+  const list   = type === 'bookings' ? allBookings : allLeads;
+  let filtered = q ? list.filter(i => (i.name||'').toLowerCase().includes(q)||(i.phone||'').toLowerCase().includes(q)||(i.reason||'').toLowerCase().includes(q)) : list;
+  if (status) filtered = filtered.filter(i => (i.status||'confirmed') === status);
   type === 'bookings' ? renderBookings(filtered) : renderLeads(filtered);
 }
 
