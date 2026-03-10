@@ -421,12 +421,23 @@ async function renderTimeSlots(isoDate) {
     ? settings.blockedDates[isoDate] : [];
   const takenSlots = [...bookedSlots, ...blockedSlots];
 
+  // Filter out past times if the selected date is today
+  const nowStockholm = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Stockholm' }));
+  const todayISO = `${nowStockholm.getFullYear()}-${String(nowStockholm.getMonth()+1).padStart(2,'0')}-${String(nowStockholm.getDate()).padStart(2,'0')}`;
+  const currentMins = nowStockholm.getHours() * 60 + nowStockholm.getMinutes();
+
+  const availableSlots = allSlots.filter(t => {
+    if (isoDate !== todayISO) return true; // future date — show all
+    const [h, m] = t.split(':').map(Number);
+    return (h * 60 + m) > currentMins; // only future times today
+  });
+
   const dateStr = new Date(isoDate).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   wrap.innerHTML = `
     <div class="time-wrap">
       <div class="time-label">Available times — ${dateStr}</div>
       <div class="time-grid" id="timeGrid">
-        ${allSlots.map(t => {
+        ${availableSlots.length === 0 ? '<div class=\"no-slots\">No more available slots today.</div>' : availableSlots.map(t => {
           const taken = takenSlots.includes(t);
           return `<button class="time-slot${taken?' taken':''}" ${taken?'disabled':''} onclick="selectTime('${t}')">${t}${taken?'<br><small>Booked</small>':''}</button>`;
         }).join('')}
