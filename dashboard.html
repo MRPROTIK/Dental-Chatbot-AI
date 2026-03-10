@@ -162,7 +162,31 @@ td{padding:14px 20px;font-size:13px;color:var(--cream);vertical-align:middle;}
 .history-log div{border-bottom:1px solid rgba(31,51,48,0.4);padding-bottom:4px;margin-bottom:4px;}
 .history-log div:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+/* Patient history */
+.patient-search-bar{display:flex;gap:12px;margin-bottom:20px;align-items:center;}
+.patient-search-bar input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 16px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--white);outline:none;transition:border-color 0.2s;}
+.patient-search-bar input:focus{border-color:var(--teal);}
+.patient-result{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:0;overflow:hidden;margin-bottom:16px;}
+.patient-result-header{padding:16px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);}
+.patient-avatar-lg{width:44px;height:44px;border-radius:50%;background:var(--teal-dim);border:1px solid rgba(10,123,108,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--teal-bright);flex-shrink:0;}
+.patient-meta h4{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--white);}
+.patient-meta p{font-size:12px;color:var(--muted);margin-top:2px;}
+.patient-visits{padding:16px 20px;}
+.visit-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(31,51,48,0.5);}
+.visit-item:last-child{border-bottom:none;}
+.visit-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);margin-top:5px;flex-shrink:0;}
+.visit-info{flex:1;}
+.visit-info .visit-date{font-size:12px;color:var(--muted);}
+.visit-info .visit-reason{font-size:13px;color:var(--cream);font-weight:500;margin-top:1px;}
+.notes-area{padding:16px 20px;border-top:1px solid var(--border);}
+.notes-area label{display:block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.note-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;max-height:160px;overflow-y:auto;}
+.note-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 13px;font-size:12px;color:var(--cream);}
+.note-item .note-meta{font-size:11px;color:var(--muted);margin-top:3px;}
+.note-input-row{display:flex;gap:10px;}
+.note-input-row textarea{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--white);outline:none;resize:none;height:60px;transition:border-color 0.2s;}
+.note-input-row textarea:focus{border-color:var(--teal);}
+.patient-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:900px){.sidebar{width:200px;}.main{margin-left:200px;padding:24px;}.stats-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:640px){.sidebar{display:none;}.main{margin-left:0;padding:16px;}.stats-grid{grid-template-columns:repeat(2,1fr);}}
@@ -209,6 +233,9 @@ td{padding:14px 20px;font-size:13px;color:var(--cream);vertical-align:middle;}
     </button>
     <button class="nav-item" onclick="showSection('offer',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Special Offer
+    </button>
+    <button class="nav-item" onclick="showSection('patients',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M12 11v4m-2-2h4"/></svg>Patient History
     </button>
     <div class="sidebar-footer">
       <button class="logout-btn" onclick="logout()">
@@ -324,6 +351,25 @@ td{padding:14px 20px;font-size:13px;color:var(--cream);vertical-align:middle;}
             <div id="offerPreview" style="display:none;background:linear-gradient(135deg,#7C4A00,#C9821A);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;">
               🎁 <span id="offerPreviewText"></span>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PATIENTS -->
+    <div class="section" id="section-patients">
+      <div class="topbar"><div><h1>Patient History</h1><p>Search by phone number to view visit history and add follow-up notes</p></div></div>
+      <div class="card">
+        <div class="card-header"><div><h3>Search Patient</h3><p>Enter patient phone number to load their full history</p></div></div>
+        <div class="card-body">
+          <div class="patient-search-bar">
+            <input type="tel" id="patientPhoneInput" placeholder="e.g. 0701234567 or +46701234567" onkeydown="if(event.key==='Enter')searchPatient()"/>
+            <button class="btn-primary" onclick="searchPatient()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search
+            </button>
+          </div>
+          <div id="patientResult">
+            <div class="patient-empty">🦷 Enter a phone number above to view patient history</div>
           </div>
         </div>
       </div>
@@ -781,6 +827,95 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── Patient History ───────────────────────────────────────────
+let currentPatientPhone = null;
+
+async function searchPatient() {
+  const phone = document.getElementById('patientPhoneInput').value.trim();
+  if (!phone) { showToast('❌ Please enter a phone number'); return; }
+  const el = document.getElementById('patientResult');
+  el.innerHTML = '<div class="patient-empty"><span class="spinner"></span> Loading…</div>';
+  try {
+    const res  = await fetch(`${WORKER_URL}/patient/history?phone=${encodeURIComponent(phone)}`, { headers: { 'x-dash-password': DASH_PASS } });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
+    currentPatientPhone = phone;
+    renderPatientResult(phone, data.history || [], data.notes || []);
+  } catch(e) {
+    el.innerHTML = `<div class="patient-empty">❌ ${esc(e.message)}</div>`;
+  }
+}
+
+function renderPatientResult(phone, history, notes) {
+  const el = document.getElementById('patientResult');
+  if (!history.length && !notes.length) {
+    el.innerHTML = `<div class="patient-empty">No records found for <strong>${esc(phone)}</strong></div>`;
+    return;
+  }
+  const first = history[0] || {};
+  const initials = (first.name || '?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+
+  const visits = history.map(b => `
+    <div class="visit-item">
+      <div class="visit-dot"></div>
+      <div class="visit-info">
+        <div class="visit-date">📅 ${esc(b.date)} at ${esc(b.time)} · <span class="status-badge ${esc(b.status||'confirmed')}" style="font-size:10px;padding:2px 7px;">${esc(b.status||'confirmed')}</span></div>
+        <div class="visit-reason">${esc(b.reason||'General appointment')}</div>
+      </div>
+    </div>`).join('');
+
+  const noteItems = notes.map(n => `
+    <div class="note-item">
+      ${esc(n.note)}
+      <div class="note-meta">📝 ${esc(n.by||'admin')} · ${new Date(n.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div class="patient-result">
+      <div class="patient-result-header">
+        <div class="patient-avatar-lg">${initials}</div>
+        <div class="patient-meta">
+          <h4>${esc(first.name||phone)}</h4>
+          <p>📞 ${esc(phone)} · ${history.length} visit${history.length!==1?'s':''}</p>
+        </div>
+      </div>
+      <div class="patient-visits">
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Visit History</div>
+        ${visits || '<div style="color:var(--muted);font-size:13px;">No visits yet.</div>'}
+      </div>
+      <div class="notes-area">
+        <label>Follow-up Notes</label>
+        <div class="note-list" id="noteList">${noteItems || '<div style="color:var(--muted);font-size:12px;">No notes yet.</div>'}</div>
+        <div class="note-input-row">
+          <textarea id="newNoteText" placeholder="Add a follow-up note…"></textarea>
+          <button class="btn-primary" style="height:60px;padding:0 16px;" onclick="saveNote()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function saveNote() {
+  const note = document.getElementById('newNoteText').value.trim();
+  if (!note) { showToast('❌ Note cannot be empty'); return; }
+  if (!currentPatientPhone) return;
+  try {
+    const res  = await fetch(`${WORKER_URL}/patient/history`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'x-dash-password': DASH_PASS },
+      body:    JSON.stringify({ phone: currentPatientPhone, note, by: 'admin' }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
+    document.getElementById('newNoteText').value = '';
+    showToast('✅ Note saved!');
+    searchPatient(); // reload
+  } catch(e) {
+    showToast('❌ ' + e.message);
+  }
 }
 
 setInterval(() => { if(document.getElementById('dashboard').style.display!=='none') loadData(); }, 60000);
